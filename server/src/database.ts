@@ -26,6 +26,7 @@ export type AuthUser = {
   email: string;
   quotaUsageInBytes: number;
   quotaSizeInBytes: number | null;
+  trustedGroupId: string;
 };
 
 export type AlbumUser = {
@@ -249,7 +250,7 @@ export type Person = {
   name: string;
   birthDate: Date | null;
   color: string | null;
-  faceAssetId: string | null;
+  thumbnailFaceAssetId: string | null;
   isHidden: boolean;
   thumbnailPath: string;
 };
@@ -274,7 +275,15 @@ export type AssetFace = {
 
 export type Plugin = Selectable<PluginTable>;
 
-const userColumns = ['id', 'name', 'email', 'avatarColor', 'profileImagePath', 'profileChangedAt'] as const;
+const userColumns = [
+  'id',
+  'name',
+  'email',
+  'avatarColor',
+  'profileImagePath',
+  'profileChangedAt',
+  'trustedGroupId',
+] as const;
 const userWithPrefixColumns = [
   'user2.id',
   'user2.name',

@@ -417,7 +417,7 @@ export class DatabaseRepository {
         .execute();
 
       await tx
-        .updateTable('person')
+        .updateTable('person_user')
         .set((eb) => ({ thumbnailPath: eb.fn('REGEXP_REPLACE', ['thumbnailPath', source, target]) }))
         .execute();
 
