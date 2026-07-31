@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/translate_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/base_action_button.widget.dart';
 import 'package:immich_mobile/routing/router.dart';
 
-class SetProfilePictureActionButton extends ConsumerWidget {
+class SetProfilePictureActionButton extends StatelessWidget {
   final BaseAsset asset;
   final bool iconOnly;
   final bool menuItem;
@@ -24,7 +23,7 @@ class SetProfilePictureActionButton extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return BaseActionButton(
       iconData: Icons.account_circle_outlined,
       label: "set_as_profile_picture".t(context: context),

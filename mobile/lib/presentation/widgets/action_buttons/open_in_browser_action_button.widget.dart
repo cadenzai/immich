@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -7,7 +6,7 @@ import 'package:immich_mobile/extensions/translate_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/base_action_button.widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class OpenInBrowserActionButton extends ConsumerWidget {
+class OpenInBrowserActionButton extends StatelessWidget {
   final String remoteId;
   final TimelineOrigin origin;
   final bool iconOnly;
@@ -43,7 +42,7 @@ class OpenInBrowserActionButton extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return BaseActionButton(
       label: 'open_in_browser'.t(context: context),
       iconData: Icons.open_in_browser,

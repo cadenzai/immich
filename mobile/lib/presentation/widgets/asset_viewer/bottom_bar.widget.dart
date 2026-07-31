@@ -38,7 +38,7 @@ class ViewerBottomBar extends ConsumerWidget {
     final showingDetails = ref.watch(assetViewerProvider.select((s) => s.showingDetails));
     final isInLockedView = ref.watch(inLockedViewProvider);
     final serverInfo = ref.watch(serverInfoProvider);
-    final isInTrash = ref.read(timelineServiceProvider).origin == TimelineOrigin.trash;
+    final isInTrash = ref.watch(timelineServiceProvider).origin == TimelineOrigin.trash;
 
     final originalTheme = context.themeData;
 
