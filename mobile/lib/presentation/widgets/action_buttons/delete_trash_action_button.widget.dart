@@ -23,7 +23,7 @@ class DeleteTrashActionButton extends ConsumerWidget {
       return;
     }
 
-    final selectCount = ref.watch(multiSelectProvider.select((s) => s.selectedAssets.length));
+    final selectCount = ref.read(multiSelectProvider.select((s) => s.selectedAssets.length));
 
     final confirmDelete =
         await showDialog<bool>(
@@ -31,16 +31,16 @@ class DeleteTrashActionButton extends ConsumerWidget {
           builder: (context) => PermanentDeleteDialog(count: selectCount),
         ) ??
         false;
-    if (!confirmDelete) {
+    if (!confirmDelete || !context.mounted) {
       return;
     }
 
     final result = await ref.read(actionProvider.notifier).deleteRemoteAndLocal(source);
-    ref.read(multiSelectProvider.notifier).reset();
     if (!context.mounted) {
       return;
     }
 
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'assets_permanently_deleted_count'.t(
       context: context,
       args: {'count': result.count.toString()},

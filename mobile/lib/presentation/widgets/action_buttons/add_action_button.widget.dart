@@ -54,7 +54,7 @@ class _AddActionButtonState extends ConsumerState<AddActionButton> {
 
     final user = ref.read(currentUserProvider);
     final isOwner = asset is RemoteAsset && asset.ownerId == user?.id;
-    final isInLockedView = ref.watch(inLockedViewProvider);
+    final isInLockedView = ref.read(inLockedViewProvider);
     final isArchived = asset is RemoteAsset && asset.visibility == AssetVisibility.archive;
     final hasRemote = asset is RemoteAsset;
     final showArchive = isOwner && !isInLockedView && hasRemote && !isArchived;

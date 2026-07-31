@@ -23,8 +23,6 @@ class RestoreActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).restoreTrash(source);
-    ref.read(multiSelectProvider.notifier).reset();
-
     if (source == ActionSource.viewer) {
       EventStream.shared.emit(const ViewerReloadAssetEvent());
     }
@@ -33,6 +31,7 @@ class RestoreActionButton extends ConsumerWidget {
       return;
     }
 
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'assets_restored_count'.t(context: context, args: {'count': result.count.toString()});
     ImmichToast.show(
       context: context,

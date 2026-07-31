@@ -33,12 +33,16 @@ class RemoveFromAlbumActionButton extends ConsumerWidget {
       EventStream.shared.emit(const ViewerReloadAssetEvent());
     }
 
-    final result = await ref.read(actionProvider.notifier).removeFromAlbum(source, albumId);
-    ref.read(multiSelectProvider.notifier).reset();
     if (!context.mounted) {
       return;
     }
 
+    final result = await ref.read(actionProvider.notifier).removeFromAlbum(source, albumId);
+    if (!context.mounted) {
+      return;
+    }
+
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'remove_from_album_action_prompt'.t(
       context: context,
       args: {'count': result.count.toString()},

@@ -19,7 +19,7 @@ class EditLocationActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).editLocation(source, context);
-    if (result == null) {
+    if (result == null || !context.mounted) {
       return;
     }
 

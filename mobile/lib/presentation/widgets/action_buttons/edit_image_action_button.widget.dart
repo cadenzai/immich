@@ -42,7 +42,7 @@ class EditImageActionButton extends ConsumerWidget {
         ref.read(remoteAssetRepositoryProvider).getExif(currentAsset.remoteId!),
       ).wait;
 
-      if (exifInfo == null) {
+      if (exifInfo == null || !context.mounted) {
         return;
       }
 

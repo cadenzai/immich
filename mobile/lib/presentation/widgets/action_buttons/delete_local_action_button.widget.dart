@@ -26,7 +26,7 @@ class DeleteLocalActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).deleteLocal(source, context);
-    if (result == null) {
+    if (result == null || !context.mounted) {
       return;
     }
 

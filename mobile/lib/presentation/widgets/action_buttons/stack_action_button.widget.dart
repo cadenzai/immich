@@ -19,17 +19,17 @@ class StackActionButton extends ConsumerWidget {
       return;
     }
 
-    final user = ref.watch(currentUserProvider);
+    final user = ref.read(currentUserProvider);
     if (user == null) {
       throw Exception('User must be logged in to access stack action');
     }
 
     final result = await ref.read(actionProvider.notifier).stack(user.id, source);
-    ref.read(multiSelectProvider.notifier).reset();
     if (!context.mounted) {
       return;
     }
 
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'stack_action_prompt'.t(context: context, args: {'count': result.count.toString()});
     ImmichToast.show(
       context: context,

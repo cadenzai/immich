@@ -15,7 +15,7 @@ class BulkTagAssetsActionButton extends ConsumerWidget {
 
   Future<void> _onTap(BuildContext context, WidgetRef ref) async {
     final result = await ref.read(actionProvider.notifier).tagAssets(source, context);
-    if (result == null) {
+    if (result == null || !context.mounted) {
       return;
     }
 

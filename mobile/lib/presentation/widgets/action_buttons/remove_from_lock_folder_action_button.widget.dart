@@ -26,11 +26,11 @@ class RemoveFromLockFolderActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).removeFromLockFolder(source);
-    ref.read(multiSelectProvider.notifier).reset();
     if (!context.mounted) {
       return;
     }
 
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'remove_from_lock_folder_action_prompt'.t(
       context: context,
       args: {'count': result.count.toString()},

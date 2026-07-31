@@ -18,11 +18,11 @@ class RestoreTrashActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).restoreTrash(source);
-    ref.read(multiSelectProvider.notifier).reset();
     if (!context.mounted) {
       return;
     }
 
+    ref.read(multiSelectProvider.notifier).reset();
     final successMessage = 'assets_restored_count'.t(context: context, args: {'count': result.count.toString()});
     ImmichToast.show(
       context: context,

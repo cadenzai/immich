@@ -27,7 +27,9 @@ class DownloadActionButton extends ConsumerWidget {
         await backgroundSyncManager.hashAssets();
       });
     } finally {
-      ref.read(multiSelectProvider.notifier).reset();
+      if (context.mounted) {
+        ref.read(multiSelectProvider.notifier).reset();
+      }
     }
   }
 

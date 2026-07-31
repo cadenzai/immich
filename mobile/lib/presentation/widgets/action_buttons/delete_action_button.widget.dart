@@ -65,6 +65,10 @@ class DeleteActionButton extends ConsumerWidget {
     final stackIndex = ref.read(assetViewerProvider).stackIndex;
 
     final result = await ref.read(actionProvider.notifier).trashRemoteAndDeleteLocal(source);
+    if (!context.mounted) {
+      return;
+    }
+
     ref.read(multiSelectProvider.notifier).reset();
 
     if (source == ActionSource.viewer && result.success) {

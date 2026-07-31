@@ -19,7 +19,7 @@ class EditDateTimeActionButton extends ConsumerWidget {
     }
 
     final result = await ref.read(actionProvider.notifier).editDateTime(source, context);
-    if (result == null) {
+    if (result == null || !context.mounted) {
       return;
     }
 
