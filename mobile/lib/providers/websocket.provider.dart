@@ -186,7 +186,7 @@ class WebsocketNotifier extends StateNotifier<WebsocketState> {
   }
 
   void _handleAlbumUpdate(dynamic _) {
-    unawaited(_ref.read(backgroundSyncProvider).syncRemote());
+    unawaited(_ref.read(backgroundSyncProvider).syncRemote(fresh: true));
   }
 
   void _handleSyncAssetEditReadyV2(dynamic data) {
