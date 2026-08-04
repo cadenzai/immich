@@ -109,5 +109,10 @@ jobs:
           build-args: |
             BUILD_ID=${{ github.run_id }}
             BUILD_IMAGE=${{ steps.version.outputs.full }}
+            BUILD_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            BUILD_IMAGE_URL=https://github.com/${{ github.repository }}/pkgs/container/immich-server
+            BUILD_REPOSITORY=${{ github.repository }}
+            BUILD_REPOSITORY_URL=https://github.com/${{ github.repository }}
             BUILD_SOURCE_REF=${{ github.ref_name }}
             BUILD_SOURCE_COMMIT=${{ github.sha }}
+            BUILD_SOURCE_URL=https://github.com/${{ github.repository }}/commit/${{ github.sha }}
