@@ -1,0 +1,117 @@
+name: Downstream upstream update
+
+on:
+  schedule:
+    - cron: '19 13 * * 1'
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: Stable upstream tag, for example v3.2.0; blank selects the latest release
+        required: false
+        type: string
+
+concurrency:
+  group: downstream-upstream-update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out downstream history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Merge the latest stable upstream release
+        id: update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REQUESTED_TAG: ${{ inputs.target_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          target_tag="${REQUESTED_TAG:-}"
+          if [[ -z "$target_tag" ]]; then
+            target_tag="$(gh api repos/immich-app/immich/releases/latest --jq '.tag_name')"
+          fi
+          if [[ ! "$target_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Refusing non-stable or malformed tag: $target_tag" >&2
+            exit 1
+          fi
+
+          current_tag="$(tr -d '[:space:]' < DOWNSTREAM_BASE)"
+          if [[ "$target_tag" == "$current_tag" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Downstream already tracks $target_tag"
+            exit 0
+          fi
+
+          git config user.name 'cadenzai-immich-update[bot]'
+          git config user.email 'cadenzai-immich-update[bot]@users.noreply.github.com'
+          git remote add upstream https://github.com/immich-app/immich.git
+          git fetch --no-tags upstream \
+            "refs/tags/${current_tag}:refs/tags/${current_tag}" \
+            "refs/tags/${target_tag}:refs/tags/${target_tag}"
+          if ! git merge-base --is-ancestor "$current_tag" "$target_tag"; then
+            echo "Refusing non-forward update from $current_tag to $target_tag" >&2
+            exit 1
+          fi
+
+          branch="automation/immich-${target_tag}"
+          git switch -c "$branch"
+          git merge --no-edit "$target_tag"
+          printf '%s\n' "$target_tag" > DOWNSTREAM_BASE
+          git add DOWNSTREAM_BASE
+          git commit -m "chore: track Immich ${target_tag}"
+          git push -u origin "$branch"
+
+          {
+            echo "changed=true"
+            echo "branch=$branch"
+            echo "current_tag=$current_tag"
+            echo "target_tag=$target_tag"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open update pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.update.outputs.branch }}
+          CURRENT_TAG: ${{ steps.update.outputs.current_tag }}
+          TARGET_TAG: ${{ steps.update.outputs.target_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh pr view "$BRANCH" --json url >/dev/null 2>&1; then
+            gh pr view "$BRANCH" --json url --jq '.url'
+            exit 0
+          fi
+
+          body_file="$(mktemp)"
+          printf '%s\n' \
+            '## Why' \
+            '' \
+            "Advance the downstream base from \`${CURRENT_TAG}\` to \`${TARGET_TAG}\` without bypassing the read-only metadata regression tests." \
+            '' \
+            '## Validation' \
+            '' \
+            '- The merge completed without conflicts.' \
+            '- Downstream CI must pass before merge.' \
+            '- The server image is published only after this PR reaches the default branch.' \
+            '' \
+            '## Failure behavior' \
+            '' \
+            'A merge conflict or failed test leaves the existing production image and digest unchanged.' \
+            > "$body_file"
+
+          gh pr create \
+            --base downstream \
+            --head "$BRANCH" \
+            --title "chore: track Immich ${TARGET_TAG}" \
+            --body-file "$body_file"
