@@ -24,6 +24,14 @@ Images built from the default `downstream` branch are published as
 `ghcr.io/cadenzai/immich-server`. They identify this fork, its source commit,
 and the GitHub Actions build in both OCI labels and Immich's build metadata.
 
+As of 2026-08-03, the `cadenzai` organization disables GitHub Actions at the
+organization boundary. The workflows are therefore reviewable but inert until
+an organization administrator enables Actions. Until then, derived images must
+be built from a clean checkout whose `downstream` HEAD exactly matches
+`origin/downstream`, tagged with that full commit SHA, and pushed through the
+guarded homelab manual-build path. Do not treat the presence of these workflow
+files as evidence that automation ran.
+
 This code is AI-assisted and is not presented to upstream as human-generated.
 Do not open an upstream pull request without first obtaining explicit approval
 under Immich's contribution policy. Remove the downstream patch and return to
